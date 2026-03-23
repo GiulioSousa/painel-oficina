@@ -4,6 +4,8 @@ import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
 import com.oficina.entity.Veiculo;
 import com.oficina.entity.VeiculoStatus;
+import com.oficina.exception.BusinessException;
+import com.oficina.exception.ResourceNotFoundException;
 import com.oficina.entity.ItemStatus;
 import com.oficina.mapper.VeiculoMapper;
 import com.oficina.repository.VeiculoRepository;
@@ -77,40 +79,39 @@ public class VeiculoServiceImpl implements VeiculoService {
         veiculoRepository.delete(veiculo);
     }
 
-    /* ==============================
-       MÉTODOS PRIVADOS DE REGRA
-       ============================== */
+    /*
+     * ==============================
+     * MÉTODOS PRIVADOS DE REGRA
+     * ==============================
+     */
 
     private void validarPlacaUnica(String placa) {
 
         if (veiculoRepository.existsByPlaca(placa)) {
-            throw new RuntimeException("Já existe um veículo com essa placa");
+            throw new BusinessException("Já existe um veículo com essa placa");
         }
     }
 
     private Veiculo buscarOuFalhar(Long id) {
 
         return veiculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado"));
     }
 
     private void validarMudancaStatus(Long veiculoId, VeiculoStatus status) {
 
         long pendentes = itemRepository.countByVeiculoIdAndStatus(
                 veiculoId,
-                ItemStatus.PENDENTE
-        );
+                ItemStatus.PENDENTE);
 
         if (status == VeiculoStatus.PRONTO && pendentes > 0) {
             throw new RuntimeException(
-                    "Não é possível marcar veículo como PRONTO com itens pendentes"
-            );
+                    "Não é possível marcar veículo como PRONTO com itens pendentes");
         }
 
         if (status == VeiculoStatus.ENTREGUE && pendentes > 0) {
             throw new RuntimeException(
-                    "Não é possível marcar veículo como ENTREGUE com itens pendentes"
-            );
+                    "Não é possível marcar veículo como ENTREGUE com itens pendentes");
         }
     }
 }

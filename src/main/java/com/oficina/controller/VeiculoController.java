@@ -46,6 +46,7 @@ public class VeiculoController {
     public ResponseEntity<VeiculoResponseDTO> atualizarStatus(
         @PathVariable Long id,
         @RequestParam String status) {
+            
             VeiculoResponseDTO response = veiculoService.atualizarStatus(id, status);
 
             return ResponseEntity.ok(response);
