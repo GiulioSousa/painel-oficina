@@ -79,8 +79,6 @@ public class ItemServiceImpl implements ItemService {
 
         item = itemRepository.save(item);
 
-        validarConsistenciaVeiculo(veiculo);
-
         return ItemMapper.toResponseDTO(item);
     }
 
@@ -100,8 +98,6 @@ public class ItemServiceImpl implements ItemService {
 
         item = itemRepository.save(item);
 
-        validarConsistenciaVeiculo(veiculo);
-
         return ItemMapper.toResponseDTO(item);
     }
 
@@ -116,8 +112,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemRepository.delete(item);
-
-        validarConsistenciaVeiculo(veiculo);
     }
 
     /*
@@ -143,18 +137,6 @@ public class ItemServiceImpl implements ItemService {
             return ItemStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new BusinessException("Status inválido");
-        }
-    }
-
-    private void validarConsistenciaVeiculo(Veiculo veiculo) {
-
-        long pendentes = itemRepository.countByVeiculoIdAndStatus(
-                veiculo.getId(),
-                ItemStatus.PENDENTE
-        );
-    
-        if (veiculo.getStatus() == VeiculoStatus.PRONTO && pendentes > 0) {
-            veiculo.setStatus(VeiculoStatus.PENDENTE);
         }
     }
 }
