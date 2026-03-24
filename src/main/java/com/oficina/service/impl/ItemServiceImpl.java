@@ -63,7 +63,13 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDTO atualizarItem(Long itemId, ItemRequestDTO dto) {
 
         Item item = buscarItemOuFalhar(itemId);
+        Veiculo veiculo = item.getVeiculo();
 
+        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
+            throw new BusinessException("Não é possível alterar itens de um veículo entregue.");
+
+        }
+        
         if (item.getStatus() == ItemStatus.CONCLUIDO) {
             throw new BusinessException("Item concluído não pode ser alterado");
         }
@@ -73,6 +79,8 @@ public class ItemServiceImpl implements ItemService {
 
         item = itemRepository.save(item);
 
+        validarConsistenciaVeiculo(veiculo);
+
         return ItemMapper.toResponseDTO(item);
     }
 
@@ -80,22 +88,36 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDTO atualizarStatus(Long itemId, String status) {
 
         Item item = buscarItemOuFalhar(itemId);
+        Veiculo veiculo = item.getVeiculo();
 
-        ItemStatus novoStatus = ItemStatus.valueOf(status);
+        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
+            throw new BusinessException("Não é possível alterar itens de um veículo entregue.");
+        }
+        
+        ItemStatus novoStatus = converterStatusSeguroItem(status);
 
         item.setStatus(novoStatus);
 
         item = itemRepository.save(item);
+
+        validarConsistenciaVeiculo(veiculo);
 
         return ItemMapper.toResponseDTO(item);
     }
 
     @Override
     public void excluirItem(Long itemId) {
-
+        
         Item item = buscarItemOuFalhar(itemId);
+        Veiculo veiculo = item.getVeiculo();
+
+        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
+            throw new BusinessException("Não é possível excluir itens de um veículo entregue.");
+        }
 
         itemRepository.delete(item);
+
+        validarConsistenciaVeiculo(veiculo);
     }
 
     /*
@@ -114,5 +136,25 @@ public class ItemServiceImpl implements ItemService {
 
         return itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado"));
+    }
+
+    private ItemStatus converterStatusSeguroItem(String status) {
+        try {
+            return ItemStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("Status inválido");
+        }
+    }
+
+    private void validarConsistenciaVeiculo(Veiculo veiculo) {
+
+        long pendentes = itemRepository.countByVeiculoIdAndStatus(
+                veiculo.getId(),
+                ItemStatus.PENDENTE
+        );
+    
+        if (veiculo.getStatus() == VeiculoStatus.PRONTO && pendentes > 0) {
+            veiculo.setStatus(VeiculoStatus.PENDENTE);
+        }
     }
 }

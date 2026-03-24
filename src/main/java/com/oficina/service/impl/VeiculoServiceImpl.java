@@ -36,11 +36,14 @@ public class VeiculoServiceImpl implements VeiculoService {
     @Override
     public VeiculoResponseDTO criarVeiculo(VeiculoRequestDTO dto) {
 
-        validarPlacaUnica(dto.getPlaca());
+        String placaNormalizada = normalizarPlaca(dto.getPlaca());
+
+        validarPlacaUnica(placaNormalizada);
 
         Veiculo veiculo = VeiculoMapper.toEntity(dto);
 
         veiculo = veiculoRepository.save(veiculo);
+        veiculo.setPlaca(placaNormalizada);
 
         return VeiculoMapper.toResponse(veiculo);
     }
@@ -49,7 +52,7 @@ public class VeiculoServiceImpl implements VeiculoService {
     @Transactional(readOnly = true)
     public List<VeiculoResponseDTO> listarVeiculos() {
 
-        return veiculoRepository.findAll()
+        return veiculoRepository.findAllByOrderByStatusAscUpdatedAtDesc()
                 .stream()
                 .map(VeiculoMapper::toResponse)
                 .collect(Collectors.toList());
@@ -60,7 +63,13 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         Veiculo veiculo = buscarOuFalhar(veiculoId);
 
-        VeiculoStatus status = VeiculoStatus.valueOf(novoStatus);
+        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
+            throw new BusinessException("Veículo já entregue. Não pode ser alterado.");
+        }
+
+        VeiculoStatus status = converterStatusSeguro(novoStatus);
+
+        validarTransicao(veiculo.getStatus(), status);
 
         validarMudancaStatus(veiculoId, status);
 
@@ -112,6 +121,31 @@ public class VeiculoServiceImpl implements VeiculoService {
         if (status == VeiculoStatus.ENTREGUE && pendentes > 0) {
             throw new RuntimeException(
                     "Não é possível marcar veículo como ENTREGUE com itens pendentes");
+        }
+    }
+
+    private String normalizarPlaca(String placa) {
+
+        return placa.trim().toUpperCase();
+    }
+
+    private VeiculoStatus converterStatusSeguro(String status) {
+        try {
+            return VeiculoStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("Status inválido");
+        }
+    }
+
+    private void validarTransicao(VeiculoStatus atual, VeiculoStatus novo) {
+
+        boolean valido = (atual == VeiculoStatus.PENDENTE
+                && (novo == VeiculoStatus.EM_ESPERA || novo == VeiculoStatus.PRONTO)) ||
+                (atual == VeiculoStatus.EM_ESPERA && novo == VeiculoStatus.PENDENTE) ||
+                (atual == VeiculoStatus.PRONTO && novo == VeiculoStatus.ENTREGUE);
+
+        if (!valido) {
+            throw new BusinessException("Mudança de status inválida");
         }
     }
 }
