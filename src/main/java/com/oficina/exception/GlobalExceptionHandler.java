@@ -66,6 +66,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiError> handleRuntimeDeliverCarReady(RuntimeException ex) {
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));
+
+        ApiError error = new ApiError(
+            HttpStatus.BAD_REQUEST.value(), 
+            ex.getMessage(),
+            List.of(),
+            sw.toString());
+
+            return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
 
