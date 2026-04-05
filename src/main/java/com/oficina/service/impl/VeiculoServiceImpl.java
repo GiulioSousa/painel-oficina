@@ -65,13 +65,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         Veiculo veiculo = buscarOuFalhar(veiculoId);
 
-        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
-            throw new BusinessException("Veículo já entregue. Não pode ser alterado.");
-        }
-
         VeiculoStatus status = converterStatusSeguro(novoStatus);
-
-        validarTransicao(veiculo.getStatus(), status);
 
         validarMudancaStatus(veiculoId, status);
 
@@ -125,13 +119,8 @@ public class VeiculoServiceImpl implements VeiculoService {
                 ItemStatus.PENDENTE);
 
         if (status == VeiculoStatus.PRONTO && pendentes > 0) {
-            throw new RuntimeException(
+            throw new BusinessException(
                     "Não é possível marcar veículo como PRONTO com itens pendentes");
-        }
-
-        if (status == VeiculoStatus.ENTREGUE && pendentes > 0) {
-            throw new RuntimeException(
-                    "Não é possível marcar veículo como ENTREGUE com itens pendentes");
         }
     }
 
@@ -145,18 +134,6 @@ public class VeiculoServiceImpl implements VeiculoService {
             return VeiculoStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new BusinessException("Status inválido");
-        }
-    }
-
-    private void validarTransicao(VeiculoStatus atual, VeiculoStatus novo) {
-
-        boolean valido = (atual == VeiculoStatus.PENDENTE
-                && (novo == VeiculoStatus.EM_ESPERA || novo == VeiculoStatus.PRONTO)) ||
-                (atual == VeiculoStatus.EM_ESPERA && novo == VeiculoStatus.PENDENTE) ||
-                (atual == VeiculoStatus.PRONTO && novo == VeiculoStatus.ENTREGUE);
-
-        if (!valido) {
-            throw new BusinessException("Mudança de status inválida");
         }
     }
 }

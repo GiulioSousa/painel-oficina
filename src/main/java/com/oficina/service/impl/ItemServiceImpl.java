@@ -63,17 +63,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDTO atualizarItem(Long itemId, ItemRequestDTO dto) {
 
         Item item = buscarItemOuFalhar(itemId);
-        Veiculo veiculo = item.getVeiculo();
-
-        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
-            throw new BusinessException("Não é possível alterar itens de um veículo entregue.");
-
-        }
         
-        if (item.getStatus() == ItemStatus.CONCLUIDO) {
-            throw new BusinessException("Item concluído não pode ser alterado");
-        }
-
         item.setDescricao(dto.getDescricao());
         item.setTipo(dto.getTipo());
 
@@ -86,11 +76,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDTO atualizarStatus(Long itemId, String status) {
 
         Item item = buscarItemOuFalhar(itemId);
-        Veiculo veiculo = item.getVeiculo();
-
-        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
-            throw new BusinessException("Não é possível alterar itens de um veículo entregue.");
-        }
         
         ItemStatus novoStatus = converterStatusSeguroItem(status);
 
@@ -105,12 +90,6 @@ public class ItemServiceImpl implements ItemService {
     public void excluirItem(Long itemId) {
         
         Item item = buscarItemOuFalhar(itemId);
-        Veiculo veiculo = item.getVeiculo();
-
-        if (veiculo.getStatus() == VeiculoStatus.ENTREGUE) {
-            throw new BusinessException("Não é possível excluir itens de um veículo entregue.");
-        }
-
         itemRepository.delete(item);
     }
 
