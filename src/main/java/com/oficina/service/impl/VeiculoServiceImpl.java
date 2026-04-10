@@ -1,5 +1,6 @@
 package com.oficina.service.impl;
 
+import com.oficina.dto.PageResponseDTO;
 import com.oficina.dto.VeiculoDetalheResponseDTO;
 import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
@@ -14,11 +15,14 @@ import com.oficina.repository.VeiculoRepository;
 import com.oficina.repository.ItemRepository;
 import com.oficina.service.VeiculoService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,12 +56,20 @@ public class VeiculoServiceImpl implements VeiculoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VeiculoResponseDTO> listarVeiculos() {
+    public PageResponseDTO<VeiculoResponseDTO> listarVeiculos(int page, int size) {
 
-        return veiculoRepository.findAllByOrderByStatusAscUpdatedAtDesc()
+        Pageable pageable = PageRequest.of(page, size);
+        
+        Page<Veiculo> pagina = veiculoRepository.findAll(pageable);
+        
+        List<VeiculoResponseDTO> content = pagina.getContent()
                 .stream()
+                .sorted(Comparator
+                    .comparing(Veiculo::getUpdatedAt).reversed())
                 .map(VeiculoMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
+        
+        return new PageResponseDTO<>(content, pagina.getTotalPages());
     }
 
     @Override
@@ -93,6 +105,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         return VeiculoDetalheMapper.toResponse(veiculo);
     }
+    
     /*
      * ==============================
      * MÉTODOS PRIVADOS DE REGRA
@@ -136,4 +149,7 @@ public class VeiculoServiceImpl implements VeiculoService {
             throw new BusinessException("Status inválido");
         }
     }
+
+
+
 }

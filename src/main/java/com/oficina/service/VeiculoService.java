@@ -1,16 +1,15 @@
 package com.oficina.service;
 
+import com.oficina.dto.PageResponseDTO;
 import com.oficina.dto.VeiculoDetalheResponseDTO;
 import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
-
-import java.util.List;
 
 public interface VeiculoService {
 
     VeiculoResponseDTO criarVeiculo(VeiculoRequestDTO dto);
 
-    List<VeiculoResponseDTO> listarVeiculos();
+    PageResponseDTO<VeiculoResponseDTO> listarVeiculos(int page, int size);
 
     VeiculoResponseDTO atualizarStatus(Long id, String novoStatus);
 

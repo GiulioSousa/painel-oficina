@@ -1,5 +1,6 @@
 package com.oficina.controller;
 
+import com.oficina.dto.PageResponseDTO;
 import com.oficina.dto.VeiculoDetalheResponseDTO;
 import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
@@ -10,8 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/veiculos")
@@ -33,11 +32,15 @@ public class VeiculoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VeiculoResponseDTO>> listar() {
+    public ResponseEntity<PageResponseDTO<VeiculoResponseDTO>> listar(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
 
-        List<VeiculoResponseDTO> lista = veiculoService.listarVeiculos();
 
-        return ResponseEntity.ok(lista);
+        PageResponseDTO<VeiculoResponseDTO> response = 
+            veiculoService.listarVeiculos(page, size);
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/status")
