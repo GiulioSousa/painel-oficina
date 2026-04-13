@@ -1,11 +1,14 @@
 package com.oficina.dto;
 
+import java.time.LocalDateTime;
+
 public class VeiculoResponseDTO {
 
     private Long id;
     private String placa;
     private String descricao;
     private String status;
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -37,6 +40,14 @@ public class VeiculoResponseDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt (LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
 
