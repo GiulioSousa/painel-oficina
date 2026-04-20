@@ -30,6 +30,9 @@ public class Veiculo {
     @OneToMany(mappedBy = "veiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> itens;
 
+    @Column(name = "archived", nullable = false)
+    private boolean archived = false;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -96,5 +99,13 @@ public class Veiculo {
 
     public void setItens(List<Item> itens) {
         this.itens = itens;
+    }
+
+    public boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

@@ -1,6 +1,7 @@
 package com.oficina.controller;
 
 import com.oficina.dto.PageResponseDTO;
+import com.oficina.dto.VeiculoArchivedRequestDTO;
 import com.oficina.dto.VeiculoDetalheResponseDTO;
 import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
@@ -68,4 +69,15 @@ public class VeiculoController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<VeiculoResponseDTO> arquivar(
+        @PathVariable Long id, 
+        @Valid @RequestBody VeiculoArchivedRequestDTO dto) {
+
+            VeiculoResponseDTO response = veiculoService.arquivar(id, dto);
+
+            return ResponseEntity.ok(response);
+        }
+
 }

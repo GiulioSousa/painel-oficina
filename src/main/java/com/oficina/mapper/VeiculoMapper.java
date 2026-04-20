@@ -24,6 +24,7 @@ public class VeiculoMapper {
         dto.setDescricao(veiculo.getDescricao());
         dto.setStatus(veiculo.getStatus().name());
         dto.setCreatedAt(veiculo.getCreatedAt());
+        dto.setArchived(veiculo.getArchived());
 
         return dto;
     }

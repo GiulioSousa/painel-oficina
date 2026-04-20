@@ -1,6 +1,7 @@
 package com.oficina.service.impl;
 
 import com.oficina.dto.PageResponseDTO;
+import com.oficina.dto.VeiculoArchivedRequestDTO;
 import com.oficina.dto.VeiculoDetalheResponseDTO;
 import com.oficina.dto.VeiculoRequestDTO;
 import com.oficina.dto.VeiculoResponseDTO;
@@ -106,6 +107,17 @@ public class VeiculoServiceImpl implements VeiculoService {
         return VeiculoDetalheMapper.toResponse(veiculo);
     }
     
+    @Override
+    public VeiculoResponseDTO arquivar(Long veiculoId, VeiculoArchivedRequestDTO dto) {
+
+        Veiculo veiculo = buscarOuFalhar(veiculoId);
+        
+        veiculo.setArchived(dto.getArchived());
+        
+        Veiculo veiculoSalvo = veiculoRepository.save(veiculo);
+        
+        return VeiculoMapper.toResponse(veiculoSalvo);
+    }
     /*
      * ==============================
      * MÉTODOS PRIVADOS DE REGRA

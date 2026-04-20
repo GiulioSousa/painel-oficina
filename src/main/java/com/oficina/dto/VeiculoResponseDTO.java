@@ -9,6 +9,7 @@ public class VeiculoResponseDTO {
     private String descricao;
     private String status;
     private LocalDateTime createdAt;
+    private boolean archived;
 
     public Long getId() {
         return id;
@@ -48,6 +49,14 @@ public class VeiculoResponseDTO {
 
     public void setCreatedAt (LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }
 
