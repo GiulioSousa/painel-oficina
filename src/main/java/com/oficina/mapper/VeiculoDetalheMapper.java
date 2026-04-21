@@ -17,6 +17,8 @@ public class VeiculoDetalheMapper {
         dto.setPlaca(veiculo.getPlaca());
         dto.setDescricao(veiculo.getDescricao());
         dto.setStatus(veiculo.getStatus().name());
+        dto.setCreatedAt(veiculo.getCreatedAt());
+        dto.setArchived(veiculo.getArchived());
 
         List<ItemResponseDTO> itens = veiculo.getItens()
                 .stream()

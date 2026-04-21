@@ -1,5 +1,6 @@
 package com.oficina.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class VeiculoDetalheResponseDTO {
@@ -8,6 +9,8 @@ public class VeiculoDetalheResponseDTO {
     private String placa;
     private String descricao;
     private String status;
+    private LocalDateTime createdAt;
+    private boolean archived;
 
     private List<ItemResponseDTO> itens;
 
@@ -49,5 +52,21 @@ public class VeiculoDetalheResponseDTO {
 
     public void setItens(List<ItemResponseDTO> itens) {
         this.itens = itens;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }
