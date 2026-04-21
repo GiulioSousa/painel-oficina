@@ -118,6 +118,21 @@ public class VeiculoServiceImpl implements VeiculoService {
         
         return VeiculoMapper.toResponse(veiculoSalvo);
     }
+    
+    @Override
+    public VeiculoResponseDTO atualizarVeiculo(Long veiculoId, VeiculoRequestDTO dto) {
+
+        Veiculo veiculo = buscarOuFalhar(veiculoId);
+        
+        veiculo.setPlaca(normalizarPlaca(dto.getPlaca()));
+        veiculo.setDescricao(dto.getDescricao());
+        veiculo.setStatus(dto.getStatus());
+        
+        Veiculo veiculoSalvo = veiculoRepository.save(veiculo);
+        
+        return VeiculoMapper.toResponse(veiculoSalvo);
+    }
+    
     /*
      * ==============================
      * MÉTODOS PRIVADOS DE REGRA

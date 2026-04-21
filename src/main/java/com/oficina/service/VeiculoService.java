@@ -19,4 +19,6 @@ public interface VeiculoService {
     VeiculoDetalheResponseDTO buscarDetalhe(Long veiculoId);
 
     VeiculoResponseDTO arquivar(Long veiculoId, VeiculoArchivedRequestDTO dto);
+
+    VeiculoResponseDTO atualizarVeiculo(Long veiculoId, VeiculoRequestDTO dto);
 }

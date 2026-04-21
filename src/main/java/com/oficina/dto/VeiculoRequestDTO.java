@@ -1,5 +1,7 @@
 package com.oficina.dto;
 
+import com.oficina.entity.VeiculoStatus;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -17,6 +19,8 @@ public class VeiculoRequestDTO {
     @Size(max = 100, message = "A descrição deve ter no máximo 120 caracteres")
     private String descricao;
 
+    private VeiculoStatus status;
+
     public String getPlaca() {
         return placa;
     }
@@ -31,6 +35,14 @@ public class VeiculoRequestDTO {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public VeiculoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VeiculoStatus status) {
+        this.status = status;
     }
 }
 

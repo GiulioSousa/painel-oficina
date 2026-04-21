@@ -34,12 +34,10 @@ public class VeiculoController {
 
     @GetMapping
     public ResponseEntity<PageResponseDTO<VeiculoResponseDTO>> listar(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-
-        PageResponseDTO<VeiculoResponseDTO> response = 
-            veiculoService.listarVeiculos(page, size);
+        PageResponseDTO<VeiculoResponseDTO> response = veiculoService.listarVeiculos(page, size);
 
         return ResponseEntity.ok(response);
     }
@@ -72,12 +70,21 @@ public class VeiculoController {
 
     @PatchMapping("/{id}/arquivar")
     public ResponseEntity<VeiculoResponseDTO> arquivar(
-        @PathVariable Long id, 
-        @Valid @RequestBody VeiculoArchivedRequestDTO dto) {
+            @PathVariable Long id,
+            @Valid @RequestBody VeiculoArchivedRequestDTO dto) {
 
-            VeiculoResponseDTO response = veiculoService.arquivar(id, dto);
+        VeiculoResponseDTO response = veiculoService.arquivar(id, dto);
 
-            return ResponseEntity.ok(response);
-        }
+        return ResponseEntity.ok(response);
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<VeiculoResponseDTO> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody VeiculoRequestDTO dto) {
+
+        VeiculoResponseDTO response = veiculoService.atualizarVeiculo(id, dto);
+
+        return ResponseEntity.ok(response);
+    }
 }
