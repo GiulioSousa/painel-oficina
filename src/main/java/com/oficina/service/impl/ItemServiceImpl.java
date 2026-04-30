@@ -15,7 +15,7 @@ import com.oficina.mapper.ItemMapper;
 import com.oficina.repository.ItemRepository;
 import com.oficina.repository.VeiculoRepository;
 import com.oficina.service.ItemService;
-
+import com.oficina.util.DescricaoValidator;
 
 @Service
 @Transactional
@@ -32,6 +32,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDTO adicionarItem(Long veiculoId, ItemRequestDTO dto) {
+
+        DescricaoValidator.validar(dto.getDescricao());
 
         Veiculo veiculo = buscarVeiculoOuFalhar(veiculoId);
 
@@ -62,8 +64,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDTO atualizarItem(Long itemId, ItemRequestDTO dto) {
 
+        DescricaoValidator.validar(dto.getDescricao());
+
         Item item = buscarItemOuFalhar(itemId);
-        
+
         item.setDescricao(dto.getDescricao());
         item.setTipo(dto.getTipo());
 
@@ -76,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDTO atualizarStatus(Long itemId, String status) {
 
         Item item = buscarItemOuFalhar(itemId);
-        
+
         ItemStatus novoStatus = converterStatusSeguroItem(status);
 
         item.setStatus(novoStatus);
@@ -88,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void excluirItem(Long itemId) {
-        
+
         Item item = buscarItemOuFalhar(itemId);
         itemRepository.delete(item);
     }

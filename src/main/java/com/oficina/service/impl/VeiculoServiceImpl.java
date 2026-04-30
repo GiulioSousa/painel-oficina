@@ -15,6 +15,7 @@ import com.oficina.mapper.VeiculoMapper;
 import com.oficina.repository.VeiculoRepository;
 import com.oficina.repository.ItemRepository;
 import com.oficina.service.VeiculoService;
+import com.oficina.util.DescricaoValidator;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +43,8 @@ public class VeiculoServiceImpl implements VeiculoService {
 
     @Override
     public VeiculoResponseDTO criarVeiculo(VeiculoRequestDTO dto) {
+
+        DescricaoValidator.validar(dto.getDescricao());
 
         String placaNormalizada = normalizarPlaca(dto.getPlaca());
 
@@ -122,10 +125,12 @@ public class VeiculoServiceImpl implements VeiculoService {
     @Override
     public VeiculoResponseDTO atualizarVeiculo(Long veiculoId, VeiculoRequestDTO dto) {
 
+        DescricaoValidator.validar(dto.getDescricao());
+
         Veiculo veiculo = buscarOuFalhar(veiculoId);
 
         String placaNormalizada = normalizarPlaca(dto.getPlaca());
-        
+
         if (!veiculo.getPlaca().equals(placaNormalizada)) {
             validarPlacaUnica(placaNormalizada);
         }
