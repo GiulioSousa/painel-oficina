@@ -69,7 +69,14 @@ public class SecurityConfig {
                         .permitAll())
                 .sessionManagement(session -> session
                         .maximumSessions(1)
-                        .sessionRegistry(sessionRegistry()));
+                        .sessionRegistry(sessionRegistry())
+                        .expiredSessionStrategy(event -> {
+                            HttpServletResponse response = event.getResponse();
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("{\"status\":401,\"message\":\"Sessão expirada\"}");
+                        }));
 
         return http.build();
     }
