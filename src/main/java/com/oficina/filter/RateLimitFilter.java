@@ -22,7 +22,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private Bucket buildBucket() {
         Bandwidth limit = Bandwidth.builder()
                 .capacity(60)
-                .refillGreedy(60, Duration.ofMinutes(1))
+                .refillIntervally(60, Duration.ofMinutes(1))
                 .build();
         return Bucket.builder()
                 .addLimit(limit)
@@ -35,20 +35,18 @@ public class RateLimitFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String username = request.getRemoteUser();
+        String key = request.getRemoteUser() != null
+        ? request.getRemoteUser() 
+        : request.getRemoteAddr();
 
-        if (username == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Bucket bucket = buckets.computeIfAbsent(username, k -> buildBucket());
+        Bucket bucket = buckets.computeIfAbsent(key, k -> buildBucket());
 
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(429);
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
             response.setHeader("Retry-After", "60");
             response.getWriter().write(
                     "{\"status\":429,\"message\":\"Muitas requisições. Tente novamente em instantes.\"}");
