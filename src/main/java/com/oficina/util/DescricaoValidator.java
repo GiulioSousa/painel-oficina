@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class DescricaoValidator {
 
     private static final Pattern TELEFONE = Pattern.compile(
-            "(\\(?\\d{2}\\)?\\s?)(\\d{4,5}-?\\d{4})");
+            "(\\(?\\d{2}\\)?[\\s-]?)?(\\d{4,5}-?\\d{4})");
 
     private static final Pattern CPF = Pattern.compile(
             "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}");
