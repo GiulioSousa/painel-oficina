@@ -55,7 +55,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         veiculo = veiculoRepository.save(veiculo);
 
-        return VeiculoMapper.toResponse(veiculo);
+        return VeiculoMapper.toResponse(veiculo, 0);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class VeiculoServiceImpl implements VeiculoService {
                 .stream()
                 .sorted(Comparator
                         .comparing(Veiculo::getUpdatedAt).reversed())
-                .map(VeiculoMapper::toResponse)
+                .map(v -> VeiculoMapper.toResponse(v, (int) itemRepository.countByVeiculoId(v.getId())))
                 .toList();
 
         return new PageResponseDTO<>(content, pagina.getTotalPages());
@@ -89,7 +89,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         veiculoRepository.save(veiculo);
 
-        return VeiculoMapper.toResponse(veiculo);
+        return VeiculoMapper.toResponse(veiculo, (int) itemRepository.countByVeiculoId(veiculoId));
     }
 
     @Override
@@ -119,7 +119,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         Veiculo veiculoSalvo = veiculoRepository.save(veiculo);
 
-        return VeiculoMapper.toResponse(veiculoSalvo);
+        return VeiculoMapper.toResponse(veiculoSalvo, (int) itemRepository.countByVeiculoId(veiculoId));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class VeiculoServiceImpl implements VeiculoService {
 
         Veiculo veiculoSalvo = veiculoRepository.save(veiculo);
 
-        return VeiculoMapper.toResponse(veiculoSalvo);
+        return VeiculoMapper.toResponse(veiculoSalvo, (int) itemRepository.countByVeiculoId(veiculoId));
     }
 
     /*
